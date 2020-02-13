@@ -1,7 +1,7 @@
 <?php
 defined ('ABSPATH') or die ('¡No HACKS Man!');
 /*
- * Plugin Name: Wordpress Upgrarde!
+ * Plugin Name: Wordpress Upgrade!
  * Description: Mejora WordPress en seguridad y velocidad de sitio. 
  * Version: 0.1
  * Author: Miguel Ángel
