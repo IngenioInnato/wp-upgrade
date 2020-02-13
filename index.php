@@ -103,14 +103,7 @@ add_filter('registration_errors', 'sozot_registration_errors');
 
 
 // Limpieza del head
-/**
- * Limpieza de wp_head()
- *
- * Elimina enlaces innecesarios
- * Elimina el CSS utilizado por el widget de comentarios recientes
- * Elimina el  CSS utilizado en las galerías
- * Elimina el cierre automático de etiquetas y cambia de ''s a "'s en rel_canonical()
- */
+
 function nowp_head_cleanup() {
   // Eliminamos lo que sobra de la cabecera
   remove_action('wp_head', 'rsd_link');
@@ -190,31 +183,5 @@ add_filter('language_attributes', 'nowp_language_attributes');
 // =================
 
 
-// Cambiar URL de autor a id
-function change_author_permalinks() {
-  global $wp_rewrite;
-   // Primero cambiamos el valor de la base de author a lo que queramos
-   $WP_rewrite->author_base = 'perfil';
-  $wp_rewrite->flush_rules();
-}
- 
-add_action('init','change_author_permalinks');
- 
-add_filter('query_vars', 'users_query_vars');
-function users_query_vars($vars) {
-    // ahora añadimos el ID de usuario a la lista de variables válidas
-    $new_vars = array('perfil');
-    $vars = $new_vars + $vars;
-    return $vars;
-}
- 
-//Y finalmente generamos la regla de escritura de la URL con los valores anteriores 
-function user_rewrite_rules( $wp_rewrite ) {
-  $newrules = array();
-  $new_rules['perfil/(\d*)$'] = 'index.php?author=$matches[1]';
-  $wp_rewrite->rules = $new_rules + $wp_rewrite->rules;
-}
-add_filter('generate_rewrite_rules','user_rewrite_rules');
-// =========================
 
 /* ========= */ 
