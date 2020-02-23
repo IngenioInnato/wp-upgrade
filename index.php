@@ -182,6 +182,17 @@ function nowp_language_attributes() {
 add_filter('language_attributes', 'nowp_language_attributes');
 // =================
 
+/* Evitar el uso de jQuery Migrate */
+add_action( 'wp_default_scripts', 'dequeue_jquery_migrate' );
+function dequeue_jquery_migrate( $scripts ) {
+   if ( ! is_admin() && ! empty( $scripts->registered['jquery'] ) ) {
+         $scripts->registered['jquery']->deps = array_diff(
+            $scripts->registered['jquery']->deps,
+            [ 'jquery-migrate' ]
+         );
+   }
+}
+/* =============================== */
 
 
 /* ========= */ 

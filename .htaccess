@@ -1,0 +1,199 @@
+#BEGIN NO FUCIONA
+  # BEGIN Mejorar rendimiento desactivando allow override
+  AllowOverride None
+  # END Mejorar rendimiento desactivando allow override
+  # BEGIN Limitar métodos GET y PUT de peticiones al servidor
+  Options -ExecCGI -Indexes -All
+  RewriteEngine on
+  RewriteCond %{REQUEST_METHOD} ^(TRACE|TRACK|OPTIONS|HEAD) RewriteRule .* - [F]
+  # END Limitar métodos GET y PUT de peticiones al servidor
+#END NO FUCIONA
+
+
+  #BEGIN Asegurar formularios de contacto
+  RewriteCond %{HTTP_REFERER} !^http://www.dominio.es/.*$ [NC]  
+  RewriteCond %{REQUEST_POST} .*contacto.php$
+  RewriteRule .* - [F]
+  #END Asegurar formularios de contacto
+
+  # BEGIN Establecer el email del administrador del servidor
+  SetEnv SERVER_ADMIN admin@dominio.es
+  # END Establecer el email del administrador del servidor
+
+
+
+# BEGIN Asegurar el archivo htaccess
+<Files .htaccess>
+order allow,deny
+deny from all
+</Files>
+# END Asegurar el archivo htaccess
+
+# BEGIN proteger wpconfig.php 
+<Files wp-config.php>
+order allow,deny
+deny from all
+</Files>
+# END proteger wpconfig.php 
+
+
+  # BEGIN Establecemos la zona horaria del servidor
+  SetEnv TZ America/Caracas
+  # END Establecemos la zona horaria del servidor
+
+#  BEGIN Envíar la tag de idioma y juego de caracteres por defecto,  AddType 'text/html; charset=UTF-8' html
+AddDefaultCharset UTF-8
+DefaultLanguage es-ES
+#  END Envíar la tag de idioma y juego de caracteres por defecto,  AddType 'text/html; charset=UTF-8' html
+
+# BEGIN Establecer el idioma por defecto
+DefaultLanguage es-ES
+# END Establecer el idioma por defecto
+
+  # BEGIN Ahorrar ancho de banda en servidores con PHP activo
+  <ifmodule mod_php4.c>
+  php_value zlib.output_compression 16386
+  </ifmodule>
+  # END Ahorrar ancho de banda en servidores con PHP activo
+
+# BEGIN Desactivar la firma del servidor
+ServerSignature Off
+# END Desactivar la firma del servidor
+
+  # BEGIN Indicar el conjunto de caracteres por defecto
+  AddDefaultCharset utf-8
+  # END Indicar el conjunto de caracteres por defecto
+
+# BEGIN CACHE
+  # cache de imágenes y contenido flash un mes
+<FilesMatch ".(flv|gif|jpg|jpeg|png|ico|swf)$">
+Header set Cache-Control "max-age=2592000"
+</FilesMatch>
+
+  # cache de texto, css, y archivos javascript una semana
+<FilesMatch ".(js|css|pdf|txt)$">
+Header set Cache-Control "max-age=604800"
+</FilesMatch>
+
+  # cache de archivos html htm un día
+<FilesMatch ".(html|htm)$">
+Header set Cache-Control "max-age=43200"
+</FilesMatch>
+
+  # usamos esto para activar cache mínima durante tareas de desarrollo en el sitio
+<FilesMatch "\.(flv|gif|jpg|jpeg|png|ico|js|css|pdf|swf|html|htm|txt)$">
+Header set Cache-Control "max-age=5"
+</FilesMatch>
+
+  # desactivamos la cache para scripts y archivos dinámicos concretos
+<FilesMatch "\.(pl|php|cgi|spl|scgi|fcgi)$">
+Header unset Cache-Control
+</FilesMatch>
+
+  # método alternativo para cache de archivos
+ExpiresActive On
+ExpiresDefault A604800 # 1 week
+ExpiresByType image/x-icon A2419200 # 1 month
+ExpiresByType application/x-javascript A2419200 # 1 month
+ExpiresByType text/css A2419200 # 1 month
+ExpiresByType text/html A300 # 5 minutes
+  # disable caching for scripts and other dynamic files
+<FilesMatch "\.(pl|php|cgi|spl|scgi|fcgi)$">
+ExpiresActive Off
+</FilesMatch>
+# END CACHE
+
+#BEGIN Forzar SSL Conexion segura
+RewriteEngine On
+RewriteCond %{SERVER_PORT} 80
+RewriteRule ^(.*)$  [R,L]
+#END Forzar SSL Conexion segura
+
+# BEGIN Proteger contra inyecciones sql
+Options +FollowSymLinks
+RewriteEngine On
+RewriteCond %{QUERY_STRING} (\<|%3C).*script.*(\>|%3E) [NC,OR]
+RewriteCond %{QUERY_STRING} GLOBALS(=|\[|\%[0-9A-Z]{0,2}) [OR]
+RewriteCond %{QUERY_STRING} _REQUEST(=|\[|\%[0-9A-Z]{0,2})
+RewriteRule ^(.*)$ index.php [F,L]
+# END Proteger contra inyecciones sql
+
+# BEGIN 6G Protection 
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteCond %{QUERY_STRING} (eval\() [NC,OR]
+	RewriteCond %{QUERY_STRING} (127\.0\.0\.1) [NC,OR]
+	RewriteCond %{QUERY_STRING} ([a-z0-9]{2000,}) [NC,OR]
+	RewriteCond %{QUERY_STRING} (javascript:)(.*)(;) [NC,OR]
+	RewriteCond %{QUERY_STRING} (base64_encode)(.*)(\() [NC,OR]
+	RewriteCond %{QUERY_STRING} (GLOBALS|REQUEST)(=|\[|%) [NC,OR]
+	RewriteCond %{QUERY_STRING} (<|%3C)(.*)script(.*)(>|%3) [NC,OR]
+	RewriteCond %{QUERY_STRING} (\\|\.\.\.|\.\./|~|`|<|>|\|) [NC,OR]
+	RewriteCond %{QUERY_STRING} (boot\.ini|etc/passwd|self/environ) [NC,OR]
+	RewriteCond %{QUERY_STRING} (thumbs?(_editor|open)?|tim(thumb)?)\.php [NC,OR]
+	RewriteCond %{QUERY_STRING} (\'|\")(.*)(drop|insert|md5|select|union) [NC]
+	RewriteRule .* - [F]
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteCond %{REQUEST_METHOD} ^(connect|debug|move|put|trace|track) [NC]
+	RewriteRule .* - [F]
+</IfModule>
+
+<IfModule mod_rewrite.c>
+	RewriteCond %{HTTP_REFERER} ([a-z0-9]{2000,}) [NC,OR]
+	RewriteCond %{HTTP_REFERER} (semalt.com|todaperfeita) [NC]
+	RewriteRule .* - [F]
+</IfModule>
+
+<IfModule mod_alias.c>
+	RedirectMatch 403 (?i)([a-z0-9]{2000,})
+	RedirectMatch 403 (?i)(https?|ftp|php):/
+	RedirectMatch 403 (?i)(base64_encode)(.*)(\()
+	RedirectMatch 403 (?i)(=\\\'|=\\%27|/\\\'/?)\.
+	RedirectMatch 403 (?i)/(\$(\&)?|\*|\"|\.|,|&|&amp;?)/?$
+	RedirectMatch 403 (?i)(\{0\}|\(/\(|\.\.\.|\+\+\+|\\\"\\\")
+	RedirectMatch 403 (?i)(~|`|<|>|:|;|,|%|\\|\{|\}|\[|\]|\|)
+	RedirectMatch 403 (?i)/(=|\$&|_mm|cgi-|muieblack)
+	RedirectMatch 403 (?i)(&pws=0|_vti_|\(null\)|\{\$itemURL\}|echo(.*)kae|etc/passwd|eval\(|self/environ)
+	RedirectMatch 403 (?i)\.(aspx?|bash|bak?|cfg|cgi|dll|exe|git|hg|ini|jsp|log|mdb|out|sql|svn|swp|tar|rar|rdf)$
+	RedirectMatch 403 (?i)/(^$|(wp-)?config|mobiquo|phpinfo|shell|sqlpatch|thumb|thumb_editor|thumbopen|timthumb|webshell)\.php
+</IfModule>
+
+<IfModule mod_setenvif.c>
+	SetEnvIfNoCase User-Agent ([a-z0-9]{2000,}) bad_bot
+	SetEnvIfNoCase User-Agent (archive.org|binlar|casper|checkpriv|choppy|clshttp|cmsworld|diavol|dotbot|extract|feedfinder|flicky|g00g1e|harvest|heritrix|httrack|kmccrew|loader|miner|nikto|nutch|planetwork|postrank|purebot|pycurl|python|seekerspider|siclab|skygrid|sqlmap|sucker|turnit|vikspider|winhttp|xxxyy|youda|zmeu|zune) bad_bot
+	
+	<IfModule !mod_authz_core.c>
+		Order Allow,Deny
+		Allow from all
+		Deny from env=bad_bot
+	</IfModule>
+
+	<IfModule mod_authz_core.c>
+		<RequireAll>
+			Require all Granted
+			Require not env bad_bot
+		</RequireAll>
+	</IfModule>
+</IfModule>
+# END 6G Protection
+
+
+
+# BEGIN Evitar que se muestren ciertos tipos de archivo
+IndexIgnore *.wmv *.mp4 *.avi
+# END Evitar que se muestren ciertos tipos de archivo
+
+# BEGIN Denegar acceso a robots maliciosos, extractores de webs y navegadores offline
+RewriteBase /
+RewriteCond %{HTTP_USER_AGENT} ^Anarchie [OR]
+RewriteCond %{HTTP_USER_AGENT} ^ASPSeek [OR]
+RewriteCond %{HTTP_USER_AGENT} ^attach [OR]
+RewriteCond %{HTTP_USER_AGENT} ^autoemailspider [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Xaldon\ WebSpider [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Xenu [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Zeus.*Webster [OR]
+RewriteCond %{HTTP_USER_AGENT} ^Zeus
+RewriteRule ^.* - [F,L]
+# END Denegar acceso a robots maliciosos, extractores de webs y navegadores offline
