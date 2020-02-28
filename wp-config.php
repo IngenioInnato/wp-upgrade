@@ -70,3 +70,7 @@ define('SCRIPT_DEBUG', true );
 #Desactivar el editor interno de WordPress de plugins y temas
 define('DISALLOW_FILE_EDIT', true );
 #============================================================
+//PHP INI
+@ini_set( 'upload_max_size' , '12M' );
+@ini_set( 'post_max_size', '13M');
+@ini_set( 'memory_limit', '15M' );

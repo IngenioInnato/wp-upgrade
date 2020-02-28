@@ -60,9 +60,7 @@ DefaultLanguage es-ES
 ServerSignature Off
 # END Desactivar la firma del servidor
 
-  # BEGIN Indicar el conjunto de caracteres por defecto
-  AddDefaultCharset utf-8
-  # END Indicar el conjunto de caracteres por defecto
+
 
 # BEGIN CACHE
   # cache de imágenes y contenido flash un mes
